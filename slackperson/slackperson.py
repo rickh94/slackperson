@@ -13,6 +13,7 @@ class SlackPerson(object):
             username = username[1:]
         self.username = username
 
+    # perhaps reimplement to be called by __init__
     def get_slack_id(self, team_user_list):
         """Get a person's slack_id for tagging in messages.
 
@@ -23,12 +24,10 @@ class SlackPerson(object):
         that would be inefficient. Call it once externally and pass in the
         value.
         """
-        try:
-            # it's silly to do the search over and over, so after the first
-            # run this attribute with be set.
+        # it's silly to do the search over and over, so after the first run
+        # this attribute with be set.
+        if hasattr(self, '_userid'):
             return self._userid
-        except AttributeError:
-            pass
         # if it's the first run, actually do the search
         try:
             for user in team_user_list['members']:
@@ -37,6 +36,30 @@ class SlackPerson(object):
                     return self._userid
         except AttributeError:
             raise SlackDataError("team_user_list has no members element.")
+
+    def get_info(self, slackclient):
+        """Gets all the info about a user from slack.
+
+        Arguments:
+        slackclient: An already logged in SlackClient object for getting user
+        info.
+        """
+        try:
+            user_info = slackclient.api_call('users.info', user=self._userid)
+        except AttributeError:
+            raise SlackDataError("You need to run SlackPerson.get_slack_id"
+                                 " before running get info.")
+        if not user_info['ok']:
+            raise SlackDataError(("There's been a problem with {username},"
+                                  " {user_id}: {err}").format(
+                                      username=self.username,
+                                      user_id=self._userid,
+                                      err=user_info['error']))
+
+        self.fname = user_info['user']['profile']['first_name']
+        self.lname = user_info['user']['profile']['last_name']
+        self.email = user_info['user']['profile']['email']
+        self.team = user_info['user']['profile']['team']
 
 
 class SlackDataError(Exception):
