@@ -13,7 +13,7 @@ setup(name='slackperson',
       author_email='fredericmhenry@gmail.com',
       url='https://github.com/rickh94/slackperson.git',
 
-      tests_require=['pytest'],
+      tests_require=['pytest', 'pytest-cov'],
 
       license='MIT',
       python_requires='>=3',
