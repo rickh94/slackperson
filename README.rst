@@ -3,6 +3,10 @@ slackperson
 .. image:: https://travis-ci.org/rickh94/slackperson.svg?branch=master
     :target: https://travis-ci.org/rickh94/slackperson
 
+.. image:: https://codecov.io/gh/rickh94/slackperson/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/rickh94/slackperson
+
+
 A simple class \(``SlackPerson``\) for retrieving and storing information about a
 person in your slack channel from the slack api.
 
