@@ -8,10 +8,12 @@ python:
 before_install:
   - pip install codecov
   - pip install pytest
+  - pip install coverage
   - pip install pytest-cov
 install:
   - pip install .
 script: pytest --cov=slackperson
 
 after_success:
+  - coverage xml
   - codecov
