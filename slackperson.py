@@ -22,6 +22,7 @@ class SlackPerson(object):
                     self.email = user['profile']['email']
                     self.fname = user['profile']['first_name']
                     self.lname = user['profile']['last_name']
+                    self.team = user['profile']['team']
         except (KeyError, TypeError) as err:
             raise SlackDataError(
                 "team_user_list is not formed correctly: {}".format(err))

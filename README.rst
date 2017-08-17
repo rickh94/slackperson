@@ -3,7 +3,7 @@ slackperson
 .. image:: https://travis-ci.org/rickh94/slackperson.svg?branch=master
     :target: https://travis-ci.org/rickh94/slackperson
 
-A simple class \(SlackPerson\) for retrieving and storing information about a
+A simple class \(``SlackPerson``\) for retrieving and storing information about a
 person in your slack channel from the slack api.
 
 Installation
@@ -34,6 +34,8 @@ attributes:
 
 * lname: the user's last name
 
+* team: the user's team id
+
 
 Import and use the ``SlackPerson`` class:
 
@@ -48,12 +50,13 @@ Import and use the ``SlackPerson`` class:
 
 If ``myusername`` is a member of your channel (i.e. on the userlist), the
 object ``me`` will now have all of the SlackPerson attributes. If not, it
-will raise ``SlackDataError``.
+will raise ``SlackDataError``. It will also raise ``SlackDataError`` if the
+userlist is malformed in any way.
 
 
+Tests
+=====
 
-# Tests
-TBD
 
 # Exceptions
 If data passed to any SlackPerson methods are not valid, SlackDataError will
