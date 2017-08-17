@@ -1,7 +1,7 @@
 from setuptools import setup
 
 version = '0.1'
-with open('README.md', 'r') as f:
+with open('README.rst', 'r') as f:
     long_description = f.read()
 
 setup(name='slackperson',
@@ -15,7 +15,7 @@ setup(name='slackperson',
 
       tests_require=['pytest'],
 
-      license='GPLv3',
+      license='MIT',
       python_requires='>=3',
 
       py_modules=['slackperson'],
