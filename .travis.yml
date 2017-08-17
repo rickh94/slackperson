@@ -5,6 +5,13 @@ python:
   - "3.5"
   - "3.6"
   - "pypy3"
+before_install:
+  - pip install --user codecov
+  - pip install --user pytest
+  - pip install --user pytest-cov
 install:
   - pip install .
 script: pytest --cov=slackperson
+
+after_success:
+  - codecov
