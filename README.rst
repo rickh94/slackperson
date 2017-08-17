@@ -12,7 +12,7 @@ person in your slack channel from the slack api.
 
 Installation
 ============
-``$ python setup.py install``
+``$ pip install slackperson``
 
 You will also need the `slackclient
 <https://github.com/slackapi/python-slackclient>`_ package.
