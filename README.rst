@@ -60,8 +60,7 @@ userlist is malformed in any way.
 
 Tests
 =====
+There is a test case for a successful creation of a SlackPerson object and
+for the cases where exceptions should be raised. They are unittests so they
+can be run with unittest discovery or ``pytest``.
 
-
-# Exceptions
-If data passed to any SlackPerson methods are not valid, SlackDataError will
-be raised.

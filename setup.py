@@ -11,7 +11,7 @@ setup(name='slackperson',
 
       author='Rick Henry',
       author_email='fredericmhenry@gmail.com',
-      url='https://github.com/rickh94/slackperson.git',
+      url='https://github.com/rickh94/slackperson',
 
       tests_require=['pytest', 'pytest-cov'],
 
@@ -19,4 +19,16 @@ setup(name='slackperson',
       python_requires='>=3',
 
       py_modules=['slackperson'],
+
+      classifiers=[
+          'License :: OSI Approved :: MIT License',
+          'Programming Language :: Python :: 3',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Operating System :: OS Independent',
+          'Topic :: Communications :: Chat',
+      ],
+      keywords='slack',
+
       )
