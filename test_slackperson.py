@@ -54,6 +54,10 @@ class TestSlackPerson(unittest.TestCase):
             username='bobama',
             team_user_list=USERLIST
         )
+        self.assertEqual(
+            str(test_person),
+            'SlackPerson(userid=U00000002, username=bobama)'
+        )
         assert test_person.userid == 'U00000002'
         assert test_person.email == 'bobama@whitehouse.gov'
         assert test_person.fname == 'Barack'
@@ -61,7 +65,7 @@ class TestSlackPerson(unittest.TestCase):
         assert test_person.team == 'T00000001'
         # test that usernames with @s work
         test_person2 = SlackPerson(
-            username='@jbiden',
+            username='jbiden',
             team_user_list=USERLIST
         )
         assert test_person2.userid == 'U00000001'

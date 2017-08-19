@@ -32,6 +32,10 @@ class SlackPerson(object):
             raise SlackDataError("{} was not found in the user list".format(
                 self.username))
 
+    def __repr__(self):
+        return 'SlackPerson(userid={id}, username={name})'.format(
+            name=self.username, id=self.userid)
+
 
 class SlackDataError(Exception):
     """Exception raised if input data is invalid in some way."""
