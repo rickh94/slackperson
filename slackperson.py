@@ -33,6 +33,9 @@ class SlackPerson(object):
                 self.username))
 
     def __repr__(self):
+        """Representation of SlackPerson. This cannot create a SlackPerson
+        object.
+        """
         return 'SlackPerson(userid={id}, username={name})'.format(
             name=self.username, id=self.userid)
 
