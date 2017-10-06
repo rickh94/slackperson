@@ -1,43 +1,88 @@
 """Defines a class for storing a person's slack profile information."""
+import attr
 
 
+@attr.s
 class SlackPerson(object):
     """Class for storing/getting slack profile information."""
-    def __init__(self, username, team_user_list):
+    userid = attr.ib()
+    email = attr.ib()
+    username = attr.ib()
+    fname = attr.ib()
+    lname = attr.ib()
+    team = attr.ib()
+
+    @classmethod
+    def from_userlist(cls, team_user_list, username=None,
+                      userid=None):
         """Initializes SlackPerson.
 
         Arguments:
         username: the handle with or without @ used to mention someone
+        userid: the internal userid from slack.
         team_user_list: json object returned by the slack api `users.list`
         method.
         """
-        if username[0] == '@':
-            username = username[1:]
-        self.username = username
+        if username:
+            if username[0] == '@':
+                username = username[1:]
+            test_value = username
+            key = 'name'
+        elif userid:
+            test_value = userid
+            key = 'id'
+        else:
+            raise AttributeError("username or user_id is required")
+
         try:
             for user in team_user_list['members']:
-                if self.username == user['name']:
+                if test_value == user[key]:
                     # parse the json to get the user's info
-                    self.userid = user['id']
-                    self.email = user['profile']['email']
-                    self.fname = user['profile']['first_name']
-                    self.lname = user['profile']['last_name']
-                    self.team = user['profile']['team']
+                    return cls(username=user['name'],
+                               userid=user['id'],
+                               email=user['profile']['email'],
+                               fname=user['profile']['first_name'],
+                               lname=user['profile']['last_name'],
+                               team=user['profile']['team']
+                               )
         except (KeyError, TypeError) as err:
             raise SlackDataError(
                 "team_user_list is not formed correctly: {}".format(err))
 
-        # raise an error if the user was not found
-        if not hasattr(self, 'userid'):
-            raise SlackDataError("{} was not found in the user list".format(
-                self.username))
+        raise SlackDataError("{} was not found in the user list".format(
+            test_value))
 
-    def __repr__(self):
-        """Representation of SlackPerson. This cannot create a SlackPerson
-        object.
+    @classmethod
+    def from_userinfo(cls, userinfo):
+        """Initializes SlackPerson.
+
+        Arguments:
+        userinfo: json object returned by slackapi 'user.info'
         """
-        return 'SlackPerson(userid={id}, username={name})'.format(
-            name=self.username, id=self.userid)
+        # parse the json to get the user's info
+        if not isinstance(userinfo, dict):
+            raise TypeError('userinfo is not a dict')
+        try:
+            user = userinfo['user']
+        except KeyError:
+            try:
+                _ = userinfo['name']
+                user = userinfo
+            except KeyError as err:
+                raise SlackDataError(("userinfo is not formed correctly: "
+                                      " {}".format(err)))
+
+        try:
+            return cls(username=user['name'],
+                       userid=user['id'],
+                       email=user['profile']['email'],
+                       fname=user['profile']['first_name'],
+                       lname=user['profile']['last_name'],
+                       team=user['profile']['team']
+                       )
+        except (KeyError, TypeError) as err:
+            raise SlackDataError(("userinfo is not formed correctly: "
+                                  " {}".format(err)))
 
 
 class SlackDataError(Exception):

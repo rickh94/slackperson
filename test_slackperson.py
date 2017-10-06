@@ -1,6 +1,5 @@
 """Test for slackperson."""
-import unittest
-from unittest import mock
+import pytest
 from slackperson import SlackPerson
 from slackperson import SlackDataError
 
@@ -45,57 +44,110 @@ USERLIST = {"members": [
 ],
 }
 
+TESTUSERINFO = {
+    "color": "000000",
+    "id": "U00000002",
+    "name": "bobama",
+    "profile": {
+        "email": "bobama@whitehouse.gov",
+        "first_name": "Barack",
+        "last_name": "Obama",
+        "real_name": "Barack Obama",
+        "real_name_normalized": "Barack Obama",
+        "team": "T00000001"
+    },
+    "real_name": "Barack Obama",
+    "team_id": "T00000001",
+    "tz": "America/New_York",
+    "tz_label": "Eastern Daylight Time",
+    "tz_offset": -14400,
+}
 
-class TestSlackPerson(unittest.TestCase):
-    """Tests the SlackPerson class."""
-    def test_user_info(self):
-        """Test that the SlackPerson has all the right attributes."""
-        test_person = SlackPerson(
-            username='bobama',
-            team_user_list=USERLIST
-        )
-        self.assertEqual(
-            str(test_person),
-            'SlackPerson(userid=U00000002, username=bobama)'
-        )
-        assert test_person.userid == 'U00000002'
-        assert test_person.email == 'bobama@whitehouse.gov'
-        assert test_person.fname == 'Barack'
-        assert test_person.lname == 'Obama'
-        assert test_person.team == 'T00000001'
-        # test that usernames with @s work
-        test_person2 = SlackPerson(
-            username='jbiden',
-            team_user_list=USERLIST
-        )
-        assert test_person2.userid == 'U00000001'
-        assert test_person2.email == 'jbiden@whitehouse.gov'
-        assert test_person2.fname == "Joe"
-        assert test_person2.lname == "Biden"
-        assert test_person2.team == 'T00000001'
+TESTUSERINFO_FULL = {
+    'ok': 'true',
+    'user': TESTUSERINFO
+}
 
-    def test_raise_exceptions(self):
-        """Test data validation and exceptions."""
-        # User is not in list
-        self.assertRaises(
-            SlackDataError,
-            SlackPerson,
-            username='dtrump',
-            team_user_list=USERLIST
-        )
 
-        # team_user_list is wrong type
-        self.assertRaises(
-            SlackDataError,
-            SlackPerson,
-            username='bobama',
-            team_user_list='wrongtype'
-        )
+def test_from_userlist_username():
+    """Test that the SlackPerson has all the right attributes."""
+    test_person = SlackPerson.from_userlist(
+        username='bobama',
+        team_user_list=USERLIST
+    )
+    assert test_person.userid == 'U00000002'
+    assert test_person.email == 'bobama@whitehouse.gov'
+    assert test_person.fname == 'Barack'
+    assert test_person.lname == 'Obama'
+    assert test_person.team == 'T00000001'
+    assert test_person.username == 'bobama'
+    # test that usernames with @s work
+    test_person2 = SlackPerson.from_userlist(
+        username='@jbiden',
+        team_user_list=USERLIST
+    )
+    assert test_person2.userid == 'U00000001'
+    assert test_person2.email == 'jbiden@whitehouse.gov'
+    assert test_person2.fname == "Joe"
+    assert test_person2.lname == "Biden"
+    assert test_person2.team == 'T00000001'
 
-        # team_user_list doesn't have members
-        self.assertRaises(
-            SlackDataError,
-            SlackPerson,
+
+def test_from_userlist_userid():
+    test_person = SlackPerson.from_userlist(team_user_list=USERLIST,
+                                            userid='U00000002')
+    assert test_person.userid == 'U00000002'
+    assert test_person.email == 'bobama@whitehouse.gov'
+    assert test_person.fname == 'Barack'
+    assert test_person.lname == 'Obama'
+    assert test_person.team == 'T00000001'
+    assert test_person.username == 'bobama'
+
+
+def test_userlist_exceptions():
+    """Test data validation and exceptions."""
+    # User is not in list
+    with pytest.raises(SlackDataError):
+        SlackPerson.from_userlist(username='dtrump', team_user_list=USERLIST)
+
+    # team_user_list is wrong type
+    with pytest.raises(SlackDataError):
+        SlackPerson.from_userlist(username='bobama',
+                                  team_user_list='wrongtype')
+
+    # team_user_list doesn't have members
+    with pytest.raises(SlackDataError):
+        SlackPerson.from_userlist(
             username='jbiden',
             team_user_list={'ok': False, 'error': 'could not get data'}
         )
+
+    with pytest.raises(AttributeError):
+        SlackPerson.from_userlist(team_user_list=USERLIST)
+
+
+def test_from_userinfo():
+    test_person = SlackPerson.from_userinfo(userinfo=TESTUSERINFO)
+    assert test_person.userid == 'U00000002'
+    assert test_person.email == 'bobama@whitehouse.gov'
+    assert test_person.fname == 'Barack'
+    assert test_person.lname == 'Obama'
+    assert test_person.team == 'T00000001'
+    assert test_person.username == 'bobama'
+
+    test_person2 = SlackPerson.from_userinfo(userinfo=TESTUSERINFO_FULL)
+    assert test_person2.userid == 'U00000002'
+    assert test_person2.email == 'bobama@whitehouse.gov'
+    assert test_person2.fname == 'Barack'
+    assert test_person2.lname == 'Obama'
+    assert test_person2.team == 'T00000001'
+    assert test_person2.username == 'bobama'
+
+
+def test_userinfo_exceptions():
+    with pytest.raises(TypeError):
+        SlackPerson.from_userinfo(userinfo='fail')
+    with pytest.raises(SlackDataError):
+        SlackPerson.from_userinfo(userinfo={'fail': 'fail'})
+    with pytest.raises(SlackDataError):
+        SlackPerson.from_userinfo(userinfo={'name': 'test'})

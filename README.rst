@@ -19,9 +19,9 @@ You will also need the `slackclient
 
 Usage
 =====
-The ``SlackPerson`` class initializes with a username (as you would user in
-an @mention) and a list of users on the channel to pull the user's info out
-of.
+The ``SlackPerson`` class can be initialized with the from_userlist method
+that allows you to supply a username or userid and the output of the
+users.list method to get data about a user.
 
 After initialization, an instance of ``SlackPerson`` will have these
 attributes:
@@ -50,7 +50,7 @@ Import and use the ``SlackPerson`` class:
 
   sc = SlackClient(os.environ['SLACK_API_TOKEN'])
   userlist = sc.api_call('users.list')
-  me = SlackPerson('myusername', userlist)
+  me = SlackPerson.from_userlist('myusername', userlist)
 
 If ``myusername`` is a member of your channel (i.e. on the userlist), the
 object ``me`` will now have all of the SlackPerson attributes. If not, it
