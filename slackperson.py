@@ -1,5 +1,6 @@
 """Defines a class for storing a person's slack profile information."""
 import attr
+from nameparser import HumanName
 
 
 @attr.s
@@ -38,11 +39,29 @@ class SlackPerson(object):
             for user in team_user_list['members']:
                 if test_value == user[key]:
                     # parse the json to get the user's info
+                    fname = ''
+                    lname = ''
+                    if 'first_name' in user['profile']:
+                        fname = user['profile']['first_name']
+                    if 'last_name' in user['profile']:
+                        lname = user['profile']['last_name']
+                    if not fname:
+                        if 'real_name' in user['profile']:
+                            name = HumanName(user['profile']['real_name'])
+                            fname = name.first
+                            lname = name.last
+                        elif 'display_name' in user['profile']:
+                            name = HumanName(user['profile']['display_name'])
+                            fname = name.first
+                            lname = name.last
+                        else:
+                            fname = ''
+                            lname = ''
                     return cls(username=user['name'],
                                userid=user['id'],
                                email=user['profile']['email'],
-                               fname=user['profile']['first_name'],
-                               lname=user['profile']['last_name'],
+                               fname=fname,
+                               lname=lname,
                                team=user['profile']['team']
                                )
         except (KeyError, TypeError) as err:

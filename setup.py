@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '0.2'
+version = '0.3'
 with open('README.rst', 'r') as f:
     long_description = f.read()
 
@@ -13,8 +13,11 @@ setup(name='slackperson',
       author_email='fredericmhenry@gmail.com',
       url='https://github.com/rickh94/slackperson',
 
-      install_requires=['attrs'],
+      install_requires=['attrs',
+                        'nameparser'
+                        ],
       tests_require=['pytest', 'pytest-cov'],
+      setup_requires=['pytest-runner'],
 
       license='MIT',
       python_requires='>=3',
